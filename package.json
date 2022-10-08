@@ -1,0 +1,17 @@
+{
+  "name": "for-docker-listener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "event-listener.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@arbitrum/sdk": "^3.0.0",
+    "axios": "^1.1.2",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.1"
+  }
+}
