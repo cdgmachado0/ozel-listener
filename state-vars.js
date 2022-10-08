@@ -15,8 +15,8 @@ const l2Wallet = new Wallet(process.env.PK, l2ProviderTestnet);
 
 
 module.exports = {
+    l1ProviderTestnet,
     network,
     ops,
-    l1ProviderTestnet,
     l2Wallet
 };

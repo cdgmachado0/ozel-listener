@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 const { defaultAbiCoder: abiCoder } = ethers.utils;
 const axios = require('axios').default;
 const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
-const { sBeaconABI, redeemABI } = require('abis.json');
+const { sBeaconABI, redeemABI } = require('./abis.json');
 
 const {
     l1ProviderTestnet,
@@ -10,7 +10,6 @@ const {
     ops,
     l2Wallet
 } = require('./state-vars.js');
-
 
 
 const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
@@ -109,15 +108,27 @@ async function checkHash(hash) {
 async function redeemHash(message, hash, taskId) {
     let tx = await message.redeem(ops);
     await tx.wait();
+    console.log(`hash: ${hash} redemeed ^^^^^`);
     tasks[taskId].alreadyCheckedHashes.push(hash);
     
     const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
     tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash);
     await tx.wait();
+
+    //---------
+    // const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
+    // console.log('redemptions: ', redemptions);
+    // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
+
+
 
 main();
 
 
+module.exports = {
+    checkHash,
+    redeemHash
+};
 
 
