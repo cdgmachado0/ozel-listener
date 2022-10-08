@@ -1,17 +1,16 @@
-const { ethers, Wallet } = require("ethers");
+const { ethers } = require("ethers");
 const { defaultAbiCoder: abiCoder } = ethers.utils;
 const axios = require('axios').default;
 const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
 
 const {
     l1ProviderTestnet,
-    l2ProviderTestnet,
     network,
-    ops
+    ops,
+    l2Wallet
 } = require('./state-vars.js');
 
 
-const l2Wallet = new Wallet(process.env.PK, l2ProviderTestnet);
 
 const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
 const query = (taskId) => {
@@ -111,14 +110,8 @@ async function redeemHash(message, hash, taskId) {
     await tx.wait();
 }
 
-
-
 main();
 
 
-module.exports = {
-    checkHash,
-    redeemHash
-};
 
 
