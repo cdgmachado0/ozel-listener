@@ -83,7 +83,7 @@ async function main() {
             }
 
             //----------
-            const redeemedHashes = await hre.ethers.getContractAt('RedeemedHashes', redeemedHashesAddr);
+            const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
             const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
             console.log('redemptions: ', redemptions);
             console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
