@@ -29,9 +29,23 @@ const query = (taskId) => {
     }
 };
 
-const storageBeaconAddr = '0xAb6E71331EB929251fFbb6d00f571DDdC4aC1D9C'; 
-const emitterAddr = '0xB2CfB9e7239e7eFF83D0C730AcFD7a01B76d72f6'; 
-const redeemedHashesAddr = '0xB27331b9C86Fe0749BA7D01C9aCa7CDcF5Ce6788'; 
+/**
+ * *** Auto redeem ***
+ * storageBeaconAddr = '0xAb6E71331EB929251fFbb6d00f571DDdC4aC1D9C'
+ * emitterAddr = '0xB2CfB9e7239e7eFF83D0C730AcFD7a01B76d72f6'; 
+ * redeemedHashesAddr = '0xB27331b9C86Fe0749BA7D01C9aCa7CDcF5Ce6788'; 
+ * proxy = 0x253787140B6e5E735f999972815EEa0F955A1241
+ * 
+ * *** Manual redeem ***
+ * storageBeaconAddr = 0x303657c8537Cf804788740A09f2A5CC7A000C6c3
+ * emitterAddr = 0x8b7340C9E4Bd73e1e83E273c997ff49943C1f424
+ * redeemedHashesAddr = 0xC4999134b359107305C67f3a513B56F78E9262c2
+ * proxy = 0x978D205Dc4f41f00b6CeBe3e1441E21b1aC4FB0b
+ */
+
+const storageBeaconAddr = '0x303657c8537Cf804788740A09f2A5CC7A000C6c3'; 
+const emitterAddr = '0x8b7340C9E4Bd73e1e83E273c997ff49943C1f424'; 
+const redeemedHashesAddr = '0xC4999134b359107305C67f3a513B56F78E9262c2'; 
 
 const tasks = {}; 
 const proxyQueue = [];
@@ -83,10 +97,10 @@ async function main() {
             }
 
             //----------
-            const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
-            const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
-            console.log('redemptions: ', redemptions);
-            console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+            // const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
+            // const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
+            // console.log('redemptions: ', redemptions);
+            // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
         }
     });
 }
@@ -116,9 +130,9 @@ async function redeemHash(message, hash, taskId) {
     await tx.wait();
 
     //---------
-    // const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
-    // console.log('redemptions: ', redemptions);
-    // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+    const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
+    console.log('redemptions: ', redemptions);
+    console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
 
 
@@ -126,9 +140,9 @@ async function redeemHash(message, hash, taskId) {
 main();
 
 
-module.exports = {
-    checkHash,
-    redeemHash
-};
+// module.exports = {
+//     checkHash,
+//     redeemHash
+// };
 
 
