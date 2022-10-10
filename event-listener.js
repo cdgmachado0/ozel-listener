@@ -8,7 +8,8 @@ const {
     l1ProviderTestnet,
     network,
     ops,
-    l2Wallet
+    l2Wallet,
+    l2ProviderTestnet
 } = require('./state-vars.js');
 
 
@@ -109,8 +110,9 @@ async function main() {
 async function checkHash(hash) { 
     const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
     const l1Receipt = new L1TransactionReceipt(receipt);
-    const message = await l1Receipt.getL1ToL2Message(l2Wallet);
-    const status = (await message.waitForStatus()).status;
+    const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
+    const message = messages[0];
+    const status = await message.waitForStatus();
     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
 
     return [
@@ -125,24 +127,23 @@ async function redeemHash(message, hash, taskId) {
     console.log(`hash: ${hash} redemeed ^^^^^`);
     tasks[taskId].alreadyCheckedHashes.push(hash);
     
-    const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
-    tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash);
+    const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
+
+    tx = await redeemedHashes.storeRedemption(taskId, hash); 
     await tx.wait();
 
     //---------
-    const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
+    const redemptions = await redeemedHashes.getTotalRedemptions();
     console.log('redemptions: ', redemptions);
     console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
 
 
 
-main();
+// main();
 
 
-// module.exports = {
-//     checkHash,
-//     redeemHash
-// };
+
+
 
 

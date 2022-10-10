@@ -18,5 +18,6 @@ module.exports = {
     l1ProviderTestnet,
     network,
     ops,
-    l2Wallet
+    l2Wallet,
+    l2ProviderTestnet
 };
