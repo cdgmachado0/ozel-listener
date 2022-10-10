@@ -39,11 +39,11 @@ const query = (taskId) => {
  * taskId = 0xeded15c41d113d7265fde3acc70be5d1967ddc9c7cddf1f82ec2dd6ed4334fc5
  * 
  * *** Manual redeem ***
- * storageBeaconAddr = 0x303657c8537Cf804788740A09f2A5CC7A000C6c3
- * emitterAddr = 0x8b7340C9E4Bd73e1e83E273c997ff49943C1f424
- * redeemedHashesAddr = 0xC4999134b359107305C67f3a513B56F78E9262c2
- * proxy = 0x978D205Dc4f41f00b6CeBe3e1441E21b1aC4FB0b
- * taskId = 0xcff9bfb8413a85e5783df27fb58481da2da27502c47d1abebaca31547696fe61
+ * storageBeaconAddr = 0xa97D464b0eE887FFfda78bbeD0424648D61d5642
+ * emitterAddr = 0xaf77634552BB61d593448D035fcFeae5a73Ab021
+ * redeemedHashesAddr = 0x3468Eb72D0216A3160fdB53ca4D79Bf0B9fD2f5C
+ * proxy = 0xBAF6B194A7f84b659ff5570587D9cD597da31ca2
+ * taskId = 0x673437a82e5c11113ccecb1a88019cc21894f9738fbd9d37b2d6b39bf28936e0
  */
 
 const storageBeaconAddr = '0xAb6E71331EB929251fFbb6d00f571DDdC4aC1D9C'; 
@@ -100,10 +100,12 @@ async function main() {
             }
 
             //----------
+            console.log('---- for auto -----');
             const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
             const redemptions = await redeemedHashes.getTotalRedemptions();
             console.log('redemptions: ', redemptions);
             console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+            console.log('---- for auto -----');
         }
     });
 }
@@ -132,13 +134,13 @@ async function redeemHash(message, hash, taskId) {
     
     const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
 
-    tx = await redeemedHashes.storeRedemption(taskId, hash); 
+    tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
     await tx.wait();
 
     //---------
-    // const redemptions = await redeemedHashes.getTotalRedemptions();
-    // console.log('redemptions: ', redemptions);
-    // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+    const redemptions = await redeemedHashes.getTotalRedemptions();
+    console.log('redemptions: ', redemptions);
+    console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
 
 
