@@ -36,17 +36,19 @@ const query = (taskId) => {
  * emitterAddr = '0xB2CfB9e7239e7eFF83D0C730AcFD7a01B76d72f6'; 
  * redeemedHashesAddr = '0xB27331b9C86Fe0749BA7D01C9aCa7CDcF5Ce6788'; 
  * proxy = 0x253787140B6e5E735f999972815EEa0F955A1241
+ * taskId = 0xeded15c41d113d7265fde3acc70be5d1967ddc9c7cddf1f82ec2dd6ed4334fc5
  * 
  * *** Manual redeem ***
  * storageBeaconAddr = 0x303657c8537Cf804788740A09f2A5CC7A000C6c3
  * emitterAddr = 0x8b7340C9E4Bd73e1e83E273c997ff49943C1f424
  * redeemedHashesAddr = 0xC4999134b359107305C67f3a513B56F78E9262c2
  * proxy = 0x978D205Dc4f41f00b6CeBe3e1441E21b1aC4FB0b
+ * taskId = 0xcff9bfb8413a85e5783df27fb58481da2da27502c47d1abebaca31547696fe61
  */
 
-const storageBeaconAddr = '0x303657c8537Cf804788740A09f2A5CC7A000C6c3'; 
-const emitterAddr = '0x8b7340C9E4Bd73e1e83E273c997ff49943C1f424'; 
-const redeemedHashesAddr = '0xC4999134b359107305C67f3a513B56F78E9262c2'; 
+const storageBeaconAddr = '0xAb6E71331EB929251fFbb6d00f571DDdC4aC1D9C'; 
+const emitterAddr = '0xB2CfB9e7239e7eFF83D0C730AcFD7a01B76d72f6'; 
+const redeemedHashesAddr = '0xB27331b9C86Fe0749BA7D01C9aCa7CDcF5Ce6788'; 
 
 const tasks = {}; 
 const proxyQueue = [];
@@ -98,10 +100,10 @@ async function main() {
             }
 
             //----------
-            // const redeemedHashes = await hre.ethers.getContractAt(redeemABI, redeemedHashesAddr);
-            // const redemptions = await redeemedHashes.connect(l2Wallet).getTotalRedemptions();
-            // console.log('redemptions: ', redemptions);
-            // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+            const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
+            const redemptions = await redeemedHashes.getTotalRedemptions();
+            console.log('redemptions: ', redemptions);
+            console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
         }
     });
 }
@@ -112,7 +114,8 @@ async function checkHash(hash) {
     const l1Receipt = new L1TransactionReceipt(receipt);
     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
     const message = messages[0];
-    const status = await message.waitForStatus();
+    const messageRec = await message.waitForStatus();
+    const status = messageRec.status;
     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
 
     return [
@@ -123,7 +126,7 @@ async function checkHash(hash) {
 
 async function redeemHash(message, hash, taskId) {
     let tx = await message.redeem(ops);
-    await tx.wait();
+    await tx.waitForRedeem();
     console.log(`hash: ${hash} redemeed ^^^^^`);
     tasks[taskId].alreadyCheckedHashes.push(hash);
     
@@ -133,14 +136,14 @@ async function redeemHash(message, hash, taskId) {
     await tx.wait();
 
     //---------
-    const redemptions = await redeemedHashes.getTotalRedemptions();
-    console.log('redemptions: ', redemptions);
-    console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+    // const redemptions = await redeemedHashes.getTotalRedemptions();
+    // console.log('redemptions: ', redemptions);
+    // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
 
 
 
-// main();
+main();
 
 
 
