@@ -138,14 +138,34 @@ async function redeemHash(message, hash, taskId) {
     await tx.wait();
 
     //---------
-    const redemptions = await redeemedHashes.getTotalRedemptions();
-    console.log('redemptions: ', redemptions);
-    console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
+    console.log('redeemed');
+    // const redemptions = await redeemedHashes.getTotalRedemptions();
+    // console.log('redemptions: ', redemptions);
+    // console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 }
 
 
+async function redeemTest() {
+    const hash = '0x9cf3d4140e195bdda5e02073760ab935d88cfaf7d05af23354f891859659dfb1';
+    const taskId = '0xcff9bfb8413a85e5783df27fb58481da2da27502c47d1abebaca31547696fe61';
 
-main();
+    const [ message, wasRedeemed ] = await checkHash(hash);
+
+    if (!wasRedeemed) {
+        await redeemHash(message, hash, taskId);
+    } else {
+        console.log('already redeemed');
+    }
+
+
+
+}
+
+redeemTest();
+
+
+
+// main();
 
 
 
