@@ -39,16 +39,18 @@ const query = (taskId) => {
  * taskId = 0xeded15c41d113d7265fde3acc70be5d1967ddc9c7cddf1f82ec2dd6ed4334fc5
  * 
  * *** Manual redeem ***
- * storageBeaconAddr = 0x845220368404728190581F88A50d16890eDDD946
- * emitterAddr = 0x78D4fB0DB9683567FB19a7d8cD2A601249C6e9c9
- * redeemedHashesAddr = 0x11b806E1B5d5Bc44a1233eE9e4C7d89716efbC8D
- * proxy = 0x2f6107B6142c0DeB1feA648D5e7bCf2fa16Cb05b
- * taskId = 0x2aa864f171cb6cc43913ffdc079a6676abc88f57d54bd8508c23bf769be7c8de
+ * storageBeaconAddr = 0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516
+ * emitterAddr = 0x45cEaeAB767265352977E136234E4A0c3d5cDC44
+ * redeemedHashesAddr = 0xBAa20c48292C4Be9319dA3E7620F4364aac498b4
+ * proxy = 0x858F9F673Df70DB94c49cdDD221AE2C46451C9Cc
+ * taskId = 0xdce9249b88d8f3d96c8f3ec6f939437487af37fc91b81b37a26b734c125c587f
+ * FakeOZL= 0x52001CA6f781C3966577084EC0B386506C25dFD5
+ * ozERC1967 = 0x85bD2228aab3aB81Bdfc4946DFF2c4c58796610b
  */
 
-const storageBeaconAddr = '0x845220368404728190581F88A50d16890eDDD946'; 
-const emitterAddr = '0x78D4fB0DB9683567FB19a7d8cD2A601249C6e9c9'; 
-const redeemedHashesAddr = '0x11b806E1B5d5Bc44a1233eE9e4C7d89716efbC8D'; 
+const storageBeaconAddr = '0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516'; 
+const emitterAddr = '0x45cEaeAB767265352977E136234E4A0c3d5cDC44'; 
+const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4'; 
 
 const tasks = {}; 
 const proxyQueue = [];
