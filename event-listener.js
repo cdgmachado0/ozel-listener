@@ -86,7 +86,6 @@ async function main() {
 
             let result = await axios.post(URL, query(taskId));
             let executions =  result.data.data.tasks[0].taskExecutions;
-            console.log('executions: ', executions);
 
             parent:
             for (let i=0; i < executions.length; i++) {
@@ -100,14 +99,6 @@ async function main() {
 
                 wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
             }
-
-            //---------- (to erase)
-            console.log('---- for auto -----');
-            const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
-            const redemptions = await redeemedHashes.getTotalRedemptions();
-            console.log('redemptions: ', redemptions);
-            console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
-            console.log('---- for auto -----');
         }
     });
 }
@@ -129,6 +120,7 @@ async function checkHash(hash) {
 }
 
 async function redeemHash(message, hash, taskId) {
+    console.log('redeeming...');
     try {
         let tx = await message.redeem(ops);
         await tx.waitForRedeem();
@@ -139,12 +131,6 @@ async function redeemHash(message, hash, taskId) {
         tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
         await tx.wait();
     } catch {}
-
-    //--------- (to erase)
-    const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
-    const redemptions = await redeemedHashes.getTotalRedemptions();
-    console.log('redemptions: ', redemptions);
-    console.log('checked hashes: ', tasks[taskId].alreadyCheckedHashes);
 } 
 
 
