@@ -90,7 +90,7 @@ async function main() {
             parent:
             for (let i=0; i < executions.length; i++) {
                 let [ hash ] = executions[i].id.split(':');
-                console.log('hash: ', hash);
+                console.log('hash to check: ', hash);
 
                 let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
                 if (!notInCheckedArray) continue parent;
