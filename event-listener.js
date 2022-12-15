@@ -129,6 +129,7 @@ async function redeemHash(message, hash, taskId) {
     console.log(`Added to the redeem queue: ${hash}`);
 
     let redeemed;
+    let i = 0;
 
     // for (let i=0; i < redeemQueue.length; i++) {
     //     let hashToRedeem = redeemQueue[i];
@@ -142,11 +143,15 @@ async function redeemHash(message, hash, taskId) {
     // }
 
     //--------
-    while (redeemQueue.length !== 0) {
+    while (redeemQueue.length !== 0) { 
+        let hashToRedeem = redeemQueue[i];
         redeemed = await redeem(message, hashToRedeem, taskId);
         if (redeemed) {
             index = redeemQueue.indexOf(hashToRedeem);
             redeemQueue.splice(index, 1);
+            i = 0;
+        } else {
+            i = i + 1 > redeemQueue.length ? 0 : i++;
         }
     }
 } 
