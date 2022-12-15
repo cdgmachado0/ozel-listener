@@ -131,18 +131,6 @@ async function redeemHash(message, hash, taskId) {
     let redeemed;
     let i = 0;
 
-    // for (let i=0; i < redeemQueue.length; i++) {
-    //     let hashToRedeem = redeemQueue[i];
-    //     let index;
-    //     redeemed = await redeem(message, hashToRedeem, taskId);
-
-    //     if (redeemed) {
-    //         index = redeemQueue.indexOf(hashToRedeem);
-    //         redeemQueue.splice(index, 1);
-    //     }
-    // }
-
-    //--------
     while (redeemQueue.length !== 0) { 
         let hashToRedeem = redeemQueue[i];
         redeemed = await redeem(message, hashToRedeem, taskId);
