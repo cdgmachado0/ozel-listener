@@ -57,6 +57,7 @@ const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4';
 
 const tasks = {}; 
 const proxyQueue = [];
+const redeemQueue = [];
 
 async function main() {
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
@@ -124,6 +125,33 @@ async function checkHash(hash) {
 
 async function redeemHash(message, hash, taskId) {
     console.log('redeeming...');
+    redeemQueue.push(hash);
+    console.log(`Added to the redeem queue: ${hash}`);
+
+    let redeemed;
+
+    // for (let i=0; i < redeemQueue.length; i++) {
+    //     let hashToRedeem = redeemQueue[i];
+    //     let index;
+    //     redeemed = await redeem(message, hashToRedeem, taskId);
+
+    //     if (redeemed) {
+    //         index = redeemQueue.indexOf(hashToRedeem);
+    //         redeemQueue.splice(index, 1);
+    //     }
+    // }
+
+    //--------
+    while (redeemQueue.length !== 0) {
+        redeemed = await redeem(message, hashToRedeem, taskId);
+        if (redeemed) {
+            index = redeemQueue.indexOf(hashToRedeem);
+            redeemQueue.splice(index, 1);
+        }
+    }
+} 
+
+async function redeem(message, hash, taskId) {
     try {
         let tx = await message.redeem(ops);
         await tx.waitForRedeem();
@@ -133,8 +161,10 @@ async function redeemHash(message, hash, taskId) {
         const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
         tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
         await tx.wait();
+
+        return true;
     } catch {}
-} 
+}
 
 
 
