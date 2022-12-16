@@ -96,14 +96,10 @@ async function main() {
                 let [ hash ] = executions[i].id.split(':');
                 console.log('hash to check: ', hash);
 
-                console.log(1);
                 let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
-                console.log(2);
                 if (!notInCheckedArray) continue parent;
-                console.log(3);
 
                 let [ message, wasRedeemed ] = await checkHash(hash);
-                console.log(12);
 
                 wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
             }
@@ -113,15 +109,16 @@ async function main() {
 
 
 async function checkHash(hash) { 
-    console.log(4);
     const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
-    console.log(5);
     const l1Receipt = new L1TransactionReceipt(receipt);
-    console.log(6);
+    console.log('l1Receipt (tx hash): ', l1Receipt.transactionHash);
+    console.log('l2Wallet: ', await l2Wallet.getAddress());
     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
     console.log(7);
+    console.log('messages: ', messages);
     const message = messages[0];
     console.log(8);
+    console.log(hash);
     const messageRec = await message.waitForStatus();
     console.log(9);
     const status = messageRec.status;
