@@ -93,6 +93,8 @@ async function main() {
 
             parent:
             for (let i=0; i < executions.length; i++) {
+                if (!executions[i].success) continue parent;
+
                 let [ hash ] = executions[i].id.split(':');
                 console.log('hash to check: ', hash);
 
@@ -111,20 +113,11 @@ async function main() {
 async function checkHash(hash) { 
     const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
     const l1Receipt = new L1TransactionReceipt(receipt);
-    console.log('l1Receipt (tx hash): ', l1Receipt.transactionHash);
-    console.log('l2Wallet: ', await l2Wallet.getAddress());
     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
-    console.log(7);
-    console.log('messages: ', messages);
     const message = messages[0];
-    console.log(8);
-    console.log(hash);
     const messageRec = await message.waitForStatus();
-    console.log(9);
     const status = messageRec.status;
-    console.log(10);
     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
-    console.log(11);
 
     return [
         message,
