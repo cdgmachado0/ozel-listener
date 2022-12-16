@@ -89,12 +89,12 @@ async function main() {
             }
 
             let result = await axios.post(URL, query(taskId));
-            let executions =  result.data.data.tasks[0].taskExecutions;
+            // let executions =  result.data.data.tasks[0].taskExecutions;
+
+            let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
 
             parent:
             for (let i=0; i < executions.length; i++) {
-                if (!executions[i].success) continue parent;
-
                 let [ hash ] = executions[i].id.split(':');
                 console.log('hash to check: ', hash);
 
