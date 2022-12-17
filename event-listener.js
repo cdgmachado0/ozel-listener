@@ -58,6 +58,8 @@ const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4';
 const tasks = {}; 
 const proxyQueue = [];
 const redeemQueue = [];
+let finish = true;
+// let initializer = true;
 
 async function main() {
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
@@ -75,36 +77,54 @@ async function main() {
         let codedProxy = encodedData.topics[1];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
         if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push(proxy);
+        console.log('new length: ', proxyQueue.length);
 
-        setTimeout(continueExecution, 120000);
-        console.log('setTimeout rolling...');
+        while (proxyQueue.length !== 0) {
 
-        async function continueExecution() {
-            proxy = proxyQueue.shift();
-            let taskId = await storageBeacon.getTaskID(proxy);
-
-            if (!tasks[taskId]) {
-                tasks[taskId] = {};
-                tasks[taskId].alreadyCheckedHashes = [];
+            if (finish) {
+                proxy = proxyQueue.shift();
+                setTimeout(continueExecution, 60000, proxy);
+                console.log('setTimeout rolling...');
+                finish = false;
             }
 
-            let result = await axios.post(URL, query(taskId));
-            // let executions =  result.data.data.tasks[0].taskExecutions;
+            async function continueExecution() {
+                // proxy = proxyQueue.shift();
+                let taskId = await storageBeacon.getTaskID(proxy);
 
-            let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
+                if (!tasks[taskId]) {
+                    tasks[taskId] = {};
+                    tasks[taskId].alreadyCheckedHashes = [];
+                }
 
-            parent:
-            for (let i=0; i < executions.length; i++) {
-                let [ hash ] = executions[i].id.split(':');
-                console.log('hash to check: ', hash);
+                let result = await axios.post(URL, query(taskId));
 
-                let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
-                if (!notInCheckedArray) continue parent;
+                let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
+                console.log('executions: ', executions);
 
-                let [ message, wasRedeemed ] = await checkHash(hash);
+                parent:
+                for (let i=0; i < executions.length; i++) {
+                    let [ hash ] = executions[i].id.split(':');
+                    // console.log('hash to check: ', hash);
 
-                wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
+                    let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
+                    if (!notInCheckedArray) continue parent;
+
+                    let [ message, wasRedeemed ] = await checkHash(hash);
+
+                    wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
+                    finish = true;
+
+                    // if (wasRedeemed) {
+                    //     tasks[taskId].alreadyCheckedHashes.push(hash);
+                    //     finish = true;
+                    // } else {
+                    //     let finish = await redeemHash(message, hash, taskId);
+                    //     finish = true;
+                    // }
+                }
             }
+
         }
     });
 }
@@ -144,6 +164,8 @@ async function redeemHash(message, hash, taskId) {
             i = i + 1 > redeemQueue.length ? 0 : i++;
         }
     }
+
+    return true;
 } 
 
 async function redeem(message, hash, taskId) {
