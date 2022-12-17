@@ -1,38 +1,38 @@
 const { ethers } = require("ethers");
 const { defaultAbiCoder: abiCoder } = ethers.utils;
-const axios = require('axios').default;
-const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
-const { sBeaconABI, redeemABI } = require('./abis.json');
+// const axios = require('axios').default;
+// const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
+// const { sBeaconABI, redeemABI } = require('./abis.json');
 
 const { fork } = require('node:child_process');
 // const forked = fork('child.js');
 const whileFork = fork('while-fork.js');
 
-const {
-    l1ProviderTestnet,
-    network,
-    ops,
-    l2Wallet,
-    l2ProviderTestnet
-} = require('./state-vars.js');
+// const {
+//     l1ProviderTestnet,
+//     network,
+//     ops,
+//     l2Wallet,
+//     l2ProviderTestnet
+// } = require('./state-vars.js');
 
 
-const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
-const query = (taskId) => {
-    return {
-        query: `
-            {
-                tasks(where: {id: "${taskId}"}) {
-                    id
-                    taskExecutions {
-                        id,
-                        success
-                    }
-                }
-            }
-        `
-    }
-};
+// const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
+// const query = (taskId) => {
+//     return {
+//         query: `
+//             {
+//                 tasks(where: {id: "${taskId}"}) {
+//                     id
+//                     taskExecutions {
+//                         id,
+//                         success
+//                     }
+//                 }
+//             }
+//         `
+//     }
+// };
 
 /**
  * *** Auto redeem ***
@@ -55,18 +55,18 @@ const query = (taskId) => {
  * ozERC1967 = 0x85bD2228aab3aB81Bdfc4946DFF2c4c58796610b
  */
 
-const storageBeaconAddr = '0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516'; 
+// const storageBeaconAddr = '0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516'; 
 const emitterAddr = '0x45cEaeAB767265352977E136234E4A0c3d5cDC44'; 
-const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4'; 
+// const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4'; 
 
-const tasks = {}; 
+// const tasks = {}; 
 const proxyQueue = [];
-const redeemQueue = [];
-let finish = true;
+// const redeemQueue = [];
+// let finish = true;
 // let initializer = true;
 
 async function main() {
-    const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
+    // const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
 
     const filter = {
         address: emitterAddr, 
@@ -80,11 +80,11 @@ async function main() {
     await hre.ethers.provider.on(filter, async (encodedData) => { 
         let codedProxy = encodedData.topics[1];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
+
         if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push(proxy);
-        console.log('new length: ', proxyQueue.length);
+        console.log('proxyQueue in event.js: ', proxyQueue);
 
         whileFork.send(proxyQueue);
-
     });
 }
 
