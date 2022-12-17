@@ -4,6 +4,10 @@ const axios = require('axios').default;
 const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
 const { sBeaconABI, redeemABI } = require('./abis.json');
 
+const { fork } = require('node:child_process');
+// const forked = fork('child.js');
+const whileFork = fork('while-fork.js');
+
 const {
     l1ProviderTestnet,
     network,
@@ -79,109 +83,76 @@ async function main() {
         if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push(proxy);
         console.log('new length: ', proxyQueue.length);
 
-        while (proxyQueue.length !== 0) {
+        whileFork.send(proxyQueue);
 
-            if (finish) {
-                proxy = proxyQueue.shift();
-                setTimeout(continueExecution, 60000, proxy);
-                console.log('setTimeout rolling...');
-                finish = false;
-            }
-
-            async function continueExecution() {
-                // proxy = proxyQueue.shift();
-                let taskId = await storageBeacon.getTaskID(proxy);
-
-                if (!tasks[taskId]) {
-                    tasks[taskId] = {};
-                    tasks[taskId].alreadyCheckedHashes = [];
-                }
-
-                let result = await axios.post(URL, query(taskId));
-
-                let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
-                console.log('executions: ', executions);
-
-                parent:
-                for (let i=0; i < executions.length; i++) {
-                    let [ hash ] = executions[i].id.split(':');
-                    // console.log('hash to check: ', hash);
-
-                    let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
-                    if (!notInCheckedArray) continue parent;
-
-                    let [ message, wasRedeemed ] = await checkHash(hash);
-
-                    wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
-                    finish = true;
-
-                    // if (wasRedeemed) {
-                    //     tasks[taskId].alreadyCheckedHashes.push(hash);
-                    //     finish = true;
-                    // } else {
-                    //     let finish = await redeemHash(message, hash, taskId);
-                    //     finish = true;
-                    // }
-                }
-            }
-
-        }
     });
 }
 
 
-async function checkHash(hash) { 
-    const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
-    const l1Receipt = new L1TransactionReceipt(receipt);
-    const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
-    const message = messages[0];
-    const messageRec = await message.waitForStatus();
-    const status = messageRec.status;
-    const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
+// forked.on('message', (msg) => {
+//     finish = msg;
+// });
 
-    return [
-        message,
-        wasRedeemed
-    ];
-}
 
-async function redeemHash(message, hash, taskId) {
-    console.log('redeeming...');
-    redeemQueue.push(hash);
-    console.log(`Added to the redeem queue: ${hash}`);
+// function continueExecution(proxy) {
+//     forked.send({ proxy });
+// }
 
-    let redeemed;
-    let i = 0;
+//----------------
 
-    while (redeemQueue.length !== 0) { 
-        let hashToRedeem = redeemQueue[i];
-        redeemed = await redeem(message, hashToRedeem, taskId);
-        if (redeemed) {
-            index = redeemQueue.indexOf(hashToRedeem);
-            redeemQueue.splice(index, 1);
-            i = 0;
-        } else {
-            i = i + 1 > redeemQueue.length ? 0 : i++;
-        }
-    }
 
-    return true;
-} 
+// async function checkHash(hash) { 
+//     const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
+//     const l1Receipt = new L1TransactionReceipt(receipt);
+//     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
+//     const message = messages[0];
+//     const messageRec = await message.waitForStatus();
+//     const status = messageRec.status;
+//     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
 
-async function redeem(message, hash, taskId) {
-    try {
-        let tx = await message.redeem(ops);
-        await tx.waitForRedeem();
-        console.log(`hash: ${hash} redemeed ^^^^^`);
-        tasks[taskId].alreadyCheckedHashes.push(hash);
+//     return [
+//         message,
+//         wasRedeemed
+//     ];
+// }
+
+// async function redeemHash(message, hash, taskId) {
+//     console.log('redeeming...');
+//     redeemQueue.push(hash);
+//     console.log(`Added to the redeem queue: ${hash}`);
+
+//     let redeemed;
+//     let i = 0;
+
+//     while (redeemQueue.length !== 0) { 
+//         let hashToRedeem = redeemQueue[i];
+//         redeemed = await redeem(message, hashToRedeem, taskId);
+//         if (redeemed) {
+//             index = redeemQueue.indexOf(hashToRedeem);
+//             redeemQueue.splice(index, 1);
+//             i = 0;
+//         } else {
+//             i = i + 1 > redeemQueue.length ? 0 : i++;
+//         }
+//     }
+
+//     return true;
+// } 
+
+// async function redeem(message, hash, taskId) {
+//     try {
+//         let tx = await message.redeem(ops);
+//         await tx.waitForRedeem();
+//         console.log(`hash: ${hash} redemeed ^^^^^`);
+//         tasks[taskId].alreadyCheckedHashes.push(hash);
         
-        const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
-        tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
-        await tx.wait();
+//         const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
+//         tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
+//         await tx.wait();
 
-        return true;
-    } catch {}
-}
+//         return true;
+//     } catch {}
+// }
 
 
 
