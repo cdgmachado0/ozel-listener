@@ -63,7 +63,6 @@ const emitterAddr = '0x45cEaeAB767265352977E136234E4A0c3d5cDC44';
 const proxyQueue = [];
 // const redeemQueue = [];
 // let finish = true;
-// let initializer = true;
 
 async function main() {
     // const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
