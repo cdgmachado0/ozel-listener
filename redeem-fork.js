@@ -34,51 +34,51 @@ const query = (taskId) => {
 
 
 process.on('message', async (msg) => {
-  const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); //<--- put this elsewhere so it runs once
+    const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); //<--- put this elsewhere so it runs once
 
-  let { proxy } = msg;
-  let taskId = await storageBeacon.getTaskID(proxy);
+    let { proxy } = msg;
+    console.log('proxy in redeem-fork: ', proxy);
+    let taskId = await storageBeacon.getTaskID(proxy);
 
-  if (!tasks[taskId]) {
-      tasks[taskId] = {};
-      tasks[taskId].alreadyCheckedHashes = [];
-  }
+    if (!tasks[taskId]) {
+        tasks[taskId] = {};
+        tasks[taskId].alreadyCheckedHashes = [];
+    }
+    console.log(5);
 
-  let result = await axios.post(URL, query(taskId));
-  let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
-  // console.log('executions: ', executions);
+    let result = await axios.post(URL, query(taskId));
+    let executions = result.data.data.tasks[0].taskExecutions.filter(exec => exec.success === true);
+    // console.log('executions: ', executions);
 
-  parent:
-  for (let i=0; i < executions.length; i++) {
-      let [ hash ] = executions[i].id.split(':');
-      console.log('hash to check: ', hash);
+    console.log(6);
 
-      let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
-      if (!notInCheckedArray) continue parent;
+    parent:
+    for (let i=0; i < executions.length; i++) {
+        let [ hash ] = executions[i].id.split(':');
+        console.log('hash to check: ', hash);
 
-      let [ message, wasRedeemed ] = await checkHash(hash);
+        let notInCheckedArray = tasks[taskId].alreadyCheckedHashes.indexOf(hash) === -1;
+        if (!notInCheckedArray) continue parent;
 
-      wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
-      // finish = true;
-      process.send(true);
-  }
+        let [ message, wasRedeemed ] = await checkHash(hash);
+
+        wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
+        // finish = true;
+        process.send(true);
+    }
 });
 
 
 async function checkHash(hash) { 
   console.log('checking...');
   const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
-  console.log(1);
   const l1Receipt = new L1TransactionReceipt(receipt);
-  console.log(2);
   const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
-  console.log(3);
   const message = messages[0];
-  console.log(4);
+  console.log(1);
   const messageRec = await message.waitForStatus();
-  console.log(5);
+  console.log(2);
   const status = messageRec.status;
-  console.log(6);
   const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
   console.log('hash checked...');
 
