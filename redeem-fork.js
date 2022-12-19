@@ -63,6 +63,7 @@ process.on('message', async (msg) => {
         // finish = true;
     }
     process.send(true);
+    console.log('msg sent from redeem-fork...');
 });
 
 

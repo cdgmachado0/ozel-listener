@@ -23,14 +23,14 @@ process.on('message', (msg) => {
     console.log('proxyQueue in while fork: ', proxyQueue);
 
     if (turn) {
-        console.log('went to if turn...');
+        console.log('went to if turn ^^^^');
         checkProxyQueue(proxyQueue);
         turn = false;
     }
 
     redeemFork.on('message', (msg) => { 
         if (msg) {
-            console.log('went to redeemFork on...');
+            console.log('received msg from redeem-fork *****');
             checkProxyQueue(proxyQueue); //put a log here to check on proxyQueue
         }
 
@@ -53,7 +53,9 @@ function continueExecution(proxy) {
 
 function checkProxyQueue(proxyQueue) {
     if (proxyQueue.length > 0) {
+        turn = false;
         proxy = proxyQueue.shift();
+        console.log('proxyQueue after shift: ', proxyQueue);    
         setTimeout(continueExecution, 60000, proxy);
         console.log('setTimeout rolling...');
     } else {
