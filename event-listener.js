@@ -81,7 +81,6 @@ async function main() {
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
 
         if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push(proxy);
-        console.log('proxyQueue in event.js: ', proxyQueue);
 
         whileFork.send(proxyQueue);
     });

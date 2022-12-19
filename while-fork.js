@@ -31,7 +31,7 @@ process.on('message', (msg) => {
     redeemFork.on('message', (msg) => { 
         if (msg) {
             console.log('went to redeemFork on...');
-            checkProxyQueue(proxyQueue);
+            checkProxyQueue(proxyQueue); //put a log here to check on proxyQueue
         }
 
         // if (proxyQueue.length == 0) {
@@ -45,8 +45,9 @@ process.on('message', (msg) => {
 //     finish = msg;
 // });
 
-function continueExecution(proxy) { //<--- put a callback here that once 'message' arrives, it runs and checks if there are more proxies in proxy queue
-    console.log('proxy in continueExec: ', proxy);
+function continueExecution(proxy) { 
+    console.log('proxy in continueExec: ', proxy); 
+    console.log('proxyQueue in continueExec: ', proxyQueue);
     redeemFork.send({ proxy });
 }
 
@@ -56,7 +57,7 @@ function checkProxyQueue(proxyQueue) {
         setTimeout(continueExecution, 60000, proxy);
         console.log('setTimeout rolling...');
     } else {
-        console.log('went to checkProxy turn...');
+        console.log('THE END');
         turn = true;
     }
 } 
