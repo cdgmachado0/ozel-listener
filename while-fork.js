@@ -28,13 +28,14 @@ process.on('message', (msg) => {
         turn = false;
     }
 
-    redeemFork.on('message', (msg) => { 
-        if (msg) {
-            console.log('received msg from redeem-fork *****');
-            console.log('proxyQueue in on from redeem-fork: ', proxyQueue);
-            checkProxyQueue(proxyQueue); //put a log here to check on proxyQueue
-        }
-    });
+    // redeemFork.on('message', (proxy) => { 
+    //     // if (msg == true) {
+    //         console.log('received msg from redeem-fork *****');
+    //         console.log('proxy received: ', proxy);
+    //         console.log('proxyQueue in on from redeem-fork: ', proxyQueue);
+    //         checkProxyQueue(proxyQueue); 
+    //     // }
+    // });
 
 });
 
@@ -60,3 +61,13 @@ function checkProxyQueue(proxyQueue) {
         turn = true;
     }
 } 
+
+
+redeemFork.on('message', (proxy) => { 
+    // if (msg == true) {
+        console.log('received msg from redeem-fork *****');
+        console.log('proxy received: ', proxy);
+        console.log('proxyQueue in on from redeem-fork: ', proxyQueue);
+        checkProxyQueue(proxyQueue); 
+    // }
+});
