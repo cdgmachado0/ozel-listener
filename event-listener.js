@@ -84,6 +84,10 @@ async function main() {
 
         whileFork.send(proxyQueue);
     });
+
+    whileFork.on('message', (msg) => {
+        if (msg) proxyQueue.shift();
+    });
 }
 
 

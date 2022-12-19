@@ -31,12 +31,9 @@ process.on('message', (msg) => {
     redeemFork.on('message', (msg) => { 
         if (msg) {
             console.log('received msg from redeem-fork *****');
+            console.log('proxyQueue in on from redeem-fork: ', proxyQueue);
             checkProxyQueue(proxyQueue); //put a log here to check on proxyQueue
         }
-
-        // if (proxyQueue.length == 0) {
-        //     turn = true;
-        // }
     });
 
 });
@@ -53,8 +50,8 @@ function continueExecution(proxy) {
 
 function checkProxyQueue(proxyQueue) {
     if (proxyQueue.length > 0) {
-        turn = false;
         proxy = proxyQueue.shift();
+        process.send(true);
         console.log('proxyQueue after shift: ', proxyQueue);    
         setTimeout(continueExecution, 60000, proxy);
         console.log('setTimeout rolling...');

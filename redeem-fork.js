@@ -34,7 +34,7 @@ const query = (taskId) => {
 
 
 process.on('message', async (msg) => {
-    console.log('entered redeem-fork.js...')
+    console.log('entered redeem-fork.js +++++')
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); //<--- put this elsewhere so it runs once
 
     let { proxy } = msg;
@@ -62,7 +62,7 @@ process.on('message', async (msg) => {
         wasRedeemed ? tasks[taskId].alreadyCheckedHashes.push(hash) : await redeemHash(message, hash, taskId);
         // finish = true;
     }
-    process.send(true);
+    process.send(true); //<----- send the proxy here instead of true
     console.log('msg sent from redeem-fork...');
 });
 
