@@ -1,38 +1,8 @@
+const { fork } = require('node:child_process');
 const { ethers } = require("ethers");
 const { defaultAbiCoder: abiCoder } = ethers.utils;
-// const axios = require('axios').default;
-// const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
-// const { sBeaconABI, redeemABI } = require('./abis.json');
 
-const { fork } = require('node:child_process');
-// const forked = fork('child.js');
 const whileFork = fork('while-fork.js');
-
-// const {
-//     l1ProviderTestnet,
-//     network,
-//     ops,
-//     l2Wallet,
-//     l2ProviderTestnet
-// } = require('./state-vars.js');
-
-
-// const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
-// const query = (taskId) => {
-//     return {
-//         query: `
-//             {
-//                 tasks(where: {id: "${taskId}"}) {
-//                     id
-//                     taskExecutions {
-//                         id,
-//                         success
-//                     }
-//                 }
-//             }
-//         `
-//     }
-// };
 
 /**
  * *** Auto redeem ***
@@ -55,17 +25,11 @@ const whileFork = fork('while-fork.js');
  * ozERC1967 = 0x85bD2228aab3aB81Bdfc4946DFF2c4c58796610b
  */
 
-// const storageBeaconAddr = '0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516'; 
 const emitterAddr = '0x45cEaeAB767265352977E136234E4A0c3d5cDC44'; 
-// const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4'; 
-
-// const tasks = {}; 
 const proxyQueue = [];
-// const redeemQueue = [];
-// let finish = true;
+
 
 async function main() {
-    // const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr);
 
     const filter = {
         address: emitterAddr, 
@@ -85,76 +49,8 @@ async function main() {
         whileFork.send(proxyQueue);
     });
 
-    whileFork.on('message', (msg) => {
-        if (msg) proxyQueue.shift();
-    });
+    whileFork.on('message', (msg) => proxyQueue.shift());
 }
-
-
-// forked.on('message', (msg) => {
-//     finish = msg;
-// });
-
-
-// function continueExecution(proxy) {
-//     forked.send({ proxy });
-// }
-
-//----------------
-
-
-// async function checkHash(hash) { 
-//     const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
-//     const l1Receipt = new L1TransactionReceipt(receipt);
-//     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
-//     const message = messages[0];
-//     const messageRec = await message.waitForStatus();
-//     const status = messageRec.status;
-//     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
-
-//     return [
-//         message,
-//         wasRedeemed
-//     ];
-// }
-
-// async function redeemHash(message, hash, taskId) {
-//     console.log('redeeming...');
-//     redeemQueue.push(hash);
-//     console.log(`Added to the redeem queue: ${hash}`);
-
-//     let redeemed;
-//     let i = 0;
-
-//     while (redeemQueue.length !== 0) { 
-//         let hashToRedeem = redeemQueue[i];
-//         redeemed = await redeem(message, hashToRedeem, taskId);
-//         if (redeemed) {
-//             index = redeemQueue.indexOf(hashToRedeem);
-//             redeemQueue.splice(index, 1);
-//             i = 0;
-//         } else {
-//             i = i + 1 > redeemQueue.length ? 0 : i++;
-//         }
-//     }
-
-//     return true;
-// } 
-
-// async function redeem(message, hash, taskId) {
-//     try {
-//         let tx = await message.redeem(ops);
-//         await tx.waitForRedeem();
-//         console.log(`hash: ${hash} redemeed ^^^^^`);
-//         tasks[taskId].alreadyCheckedHashes.push(hash);
-        
-//         const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
-//         tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
-//         await tx.wait();
-
-//         return true;
-//     } catch {}
-// }
 
 
 
