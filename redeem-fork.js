@@ -11,8 +11,8 @@ const {
   l2ProviderTestnet
 } = require('./state-vars.js');
 
-const storageBeaconAddr = '0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516'; 
-const redeemedHashesAddr = '0xBAa20c48292C4Be9319dA3E7620F4364aac498b4'; 
+const storageBeaconAddr = '0xd7ED96eD862eCd10725De44770244269e2978b5E'; 
+const redeemedHashesAddr = '0x9b482ed221e548a8cdB1B7177079Aef68D8AB298'; 
 const tasks = {}; 
 const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
 const query = (taskId) => {
@@ -34,6 +34,7 @@ const query = (taskId) => {
 
 
 process.on('message', async (msg) => {
+    console.log('msg received in redeem fork');
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); 
     
     let { proxy } = msg;

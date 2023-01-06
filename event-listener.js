@@ -16,16 +16,16 @@ const whileFork = fork('while-fork.js');
  * ProxyFactory = 0x1B5941104AC614D445bfE9a535163bDAba32C95B
  * 
  * *** Manual redeem ***
- * storageBeaconAddr = 0xDf2956dB0E0c283d2cd7eB27ecBDaBBdEe329516
- * emitterAddr = 0x45cEaeAB767265352977E136234E4A0c3d5cDC44
- * redeemedHashesAddr = 0xBAa20c48292C4Be9319dA3E7620F4364aac498b4
- * proxy = 0x858F9F673Df70DB94c49cdDD221AE2C46451C9Cc
- * taskId = 0xdce9249b88d8f3d96c8f3ec6f939437487af37fc91b81b37a26b734c125c587f
- * FakeOZL= 0x52001CA6f781C3966577084EC0B386506C25dFD5
- * ozERC1967 = 0x85bD2228aab3aB81Bdfc4946DFF2c4c58796610b
+ * storageBeaconAddr = 0xd7ED96eD862eCd10725De44770244269e2978b5E
+ * emitterAddr = 0x124bd273D2007fb71151cb5e16e3Fc1557748147
+ * redeemedHashesAddr = 0x9b482ed221e548a8cdB1B7177079Aef68D8AB298
+ * proxy = 0x254d6F75D6B4A23Db420d03785CF39bd45dab012
+ * taskId = 0x961cdb20505a367a0a83c6b33f8fdc308721369409c3a69ca79d7c608fd58367
+ * FakeOZL = 0x46b76297BBfBBcECdB3e98B37514e0e5C41b6aDf
+ * ozERC1967 = 0x3bb56739519F41Ddb3CDf7f6875956a6DEf99227
  */
 
-const emitterAddr = '0x45cEaeAB767265352977E136234E4A0c3d5cDC44'; 
+const emitterAddr = '0x124bd273D2007fb71151cb5e16e3Fc1557748147'; 
 const proxyQueue = [];
 
 
@@ -41,6 +41,7 @@ async function main() {
     console.log('listening...');
 
     await hre.ethers.provider.on(filter, async (encodedData) => { 
+        console.log('executing...');
         let codedProxy = encodedData.topics[1];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
 

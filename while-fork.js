@@ -6,6 +6,7 @@ let turn = true;
 
 
 process.on('message', (msg) => {
+    console.log('msg received in while fork');
     proxyQueue = msg;
 
     if (turn) {
