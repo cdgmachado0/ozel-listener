@@ -17,9 +17,10 @@ async function main() {
         ]
     };
 
-    console.log('listening....');
+    console.log('listeningg....');
 
     await hre.ethers.provider.on(filter, async (encodedData) => { 
+        console.log('executing...');
         let codedProxy = encodedData.topics[1];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
 

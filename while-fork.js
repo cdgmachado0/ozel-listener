@@ -21,6 +21,7 @@ function checkProxyQueue(proxyQueue) {
         setTimeout(continueExecution, 60000, proxy);
     } else {
         turn = true;
+        console.log('THE END');
     }
 } 
 
