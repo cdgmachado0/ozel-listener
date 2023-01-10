@@ -6,8 +6,8 @@ require('dotenv').config();
 module.exports = { 
   solidity: "0.8.17",
   networks: {
-    goerli: {
-      url: process.env.GOERLI,
+    mainnet: {
+      url: process.env.MAINNET,
       accounts: [process.env.PK]
     }
   }

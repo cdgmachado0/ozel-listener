@@ -6,7 +6,6 @@ let turn = true;
 
 
 process.on('message', (msg) => {
-    console.log('msg received in while fork');
     proxyQueue = msg;
 
     if (turn) {
@@ -21,7 +20,6 @@ function checkProxyQueue(proxyQueue) {
         process.send(true);
         setTimeout(continueExecution, 60000, proxy);
     } else {
-        console.log('THE END');
         turn = true;
     }
 } 

@@ -4,17 +4,15 @@ const { L1TransactionReceipt, L1ToL2MessageStatus } = require('@arbitrum/sdk');
 const { sBeaconABI, redeemABI } = require('./abis.json');
 
 const {
-  l1ProviderTestnet,
-  network,
-  ops,
+  l1Provider,
   l2Wallet,
-  l2ProviderTestnet
+  l2Provider
 } = require('./state-vars.js');
 
-const storageBeaconAddr = '0xd7ED96eD862eCd10725De44770244269e2978b5E'; 
-const redeemedHashesAddr = '0x9b482ed221e548a8cdB1B7177079Aef68D8AB298'; 
+const storageBeaconAddr = '0xa28D3C4f8E1f08489Da4AE41451fa3120590123C'; 
+const redeemedHashesAddr = '0x3e99f954b717b26843a0924D8957CDb69A2376A0'; 
 const tasks = {}; 
-const URL = `https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-${network}`;
+const URL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me';
 const query = (taskId) => {
     return {
         query: `
@@ -34,7 +32,6 @@ const query = (taskId) => {
 
 
 process.on('message', async (msg) => {
-    console.log('msg received in redeem fork');
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); 
     
     let { proxy } = msg;
@@ -64,7 +61,7 @@ process.on('message', async (msg) => {
 
 
 async function checkHash(hash) { 
-  const receipt = await l1ProviderTestnet.getTransactionReceipt(hash);
+  const receipt = await l1Provider.getTransactionReceipt(hash);
   const l1Receipt = new L1TransactionReceipt(receipt);
   const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
   const message = messages[0];
@@ -81,18 +78,16 @@ async function checkHash(hash) {
 async function redeemHash(message, hash, taskId) {
     console.log('redeeming...');
     try {
-        console.log('here');
-        let tx = await message.redeem(ops);
+        let tx = await message.redeem();
         await tx.waitForRedeem();
         console.log(`hash: ${hash} redemeed ^^^^^`);
         tasks[taskId].alreadyCheckedHashes.push(hash);
         
-        const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
+        const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2Provider);
         tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
         await tx.wait();
     } catch(e) {
-        console.log('error: ');
-        console.log(e);
+        console.log('error: ', e);
     }
 }
 
