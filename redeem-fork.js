@@ -79,16 +79,20 @@ async function checkHash(hash) {
 }
 
 async function redeemHash(message, hash, taskId) {
-  console.log('redeeming...');
-  try {
-      let tx = await message.redeem(ops);
-      await tx.waitForRedeem();
-      console.log(`hash: ${hash} redemeed ^^^^^`);
-      tasks[taskId].alreadyCheckedHashes.push(hash);
-      
-      const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
-      tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
-      await tx.wait();
-  } catch {}
+    console.log('redeeming...');
+    try {
+        console.log('here');
+        let tx = await message.redeem(ops);
+        await tx.waitForRedeem();
+        console.log(`hash: ${hash} redemeed ^^^^^`);
+        tasks[taskId].alreadyCheckedHashes.push(hash);
+        
+        const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2ProviderTestnet);
+        tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
+        await tx.wait();
+    } catch(e) {
+        console.log('error: ');
+        console.log(e);
+    }
 }
 
