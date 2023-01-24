@@ -6,6 +6,7 @@ let turn = true;
 
 
 process.on('message', (msg) => {
+    console.log('3- received in while...');
     proxyQueue = msg;
 
     if (turn) {
@@ -19,6 +20,7 @@ function checkProxyQueue(proxyQueue) {
         proxyQueue.proxies.shift();
         proxy = proxyQueue.deets.shift();
         process.send(true);
+        console.log('4- sent...');
         setTimeout(continueExecution, 60000, proxy);
     } else {
         turn = true;
