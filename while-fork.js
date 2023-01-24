@@ -27,4 +27,4 @@ function checkProxyQueue(proxyQueue) {
 
 redeemFork.on('message', (msg) => checkProxyQueue(proxyQueue));
 
-const continueExecution = (proxy) => redeemFork.send({ proxy });
+const continueExecution = (proxy) => redeemFork.send(proxy);

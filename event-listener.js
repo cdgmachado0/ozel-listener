@@ -4,7 +4,7 @@ const { defaultAbiCoder: abiCoder } = ethers.utils;
 
 const whileFork = fork('while-fork.js');
 
-const emitterAddr = '0x068dC6Ae11639E458575e5a997aE35a69b577964'; 
+const emitterAddr = '0xd10f9bAD680d551F7709841abe3Dea5d354D9e2c'; 
 const proxyQueue = [];
 
 
@@ -13,7 +13,7 @@ async function main() {
     const filter = {
         address: emitterAddr, 
         topics: [
-            ethers.utils.id("ShowTicket(address)") 
+            ethers.utils.id("ShowTicket(address,address)") 
         ]
     };
 
@@ -22,9 +22,12 @@ async function main() {
     await hre.ethers.provider.on(filter, async (encodedData) => { 
         console.log('executing...');
         let codedProxy = encodedData.topics[1];
+        let codedOwner = encodedData.topics[2];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
+        let [ owner ] = abiCoder.decode(['address'], codedOwner);
 
-        if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push(proxy);
+        if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push({ proxy, owner });
+        // if (proxyQueue.map(pr => pr.proxy).indexOf(proxy) === -1) proxyQueue.push({ proxy, owner });
 
         whileFork.send(proxyQueue);
     });

@@ -9,8 +9,8 @@ const {
   l2Provider
 } = require('./state-vars.js');
 
-const storageBeaconAddr = '0xa28D3C4f8E1f08489Da4AE41451fa3120590123C'; 
-const redeemedHashesAddr = '0x3e99f954b717b26843a0924D8957CDb69A2376A0'; 
+const storageBeaconAddr = '0xC495aE737ec10cBea741c52F0DcF54856985A621'; 
+const redeemedHashesAddr = '0x9a128E96CfCB6D4c2cc88B3775a33818a81D5927'; 
 const tasks = {}; 
 const URL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me';
 const query = (taskId) => {
@@ -34,8 +34,8 @@ const query = (taskId) => {
 process.on('message', async (msg) => {
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); 
     
-    let { proxy } = msg;
-    let taskId = await storageBeacon.getTaskID(proxy);
+    let { proxy, owner } = msg;
+    let taskId = await storageBeacon.getTaskID(proxy, owner);
 
     if (!tasks[taskId]) {
         tasks[taskId] = {};
