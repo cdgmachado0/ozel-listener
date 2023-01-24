@@ -15,8 +15,9 @@ process.on('message', (msg) => {
 });
 
 function checkProxyQueue(proxyQueue) {
-    if (proxyQueue.length > 0) {
-        proxy = proxyQueue.shift();
+    if (proxyQueue.proxies.length > 0) {
+        proxyQueue.proxies.shift();
+        proxy = proxyQueue.deets.shift();
         process.send(true);
         setTimeout(continueExecution, 60000, proxy);
     } else {
