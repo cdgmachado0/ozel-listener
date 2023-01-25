@@ -70,6 +70,7 @@ async function checkHash(hash) {
     const messageRec = await message.waitForStatus();
     const status = messageRec.status;
     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
+    if (wasRedeemed) console.log(`hash redeemed: ${hash}`);
 
     return [
         message,
