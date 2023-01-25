@@ -9,8 +9,8 @@ const {
   l2Provider
 } = require('./state-vars.js');
 
-const storageBeaconAddr = '0x8CcDacCe59b04149742681DEb201b3dcCB3250cD'; 
-const redeemedHashesAddr = '0x6b20430540E52C106986eab0315D25980b4068f4'; 
+const storageBeaconAddr = '0x923F1A77B9F860E622492042edb840980B868Fe0'; 
+const redeemedHashesAddr = '0xEbd24110595AEaAE06CD419eBBe0D4b7aAa5611b'; 
 const tasks = {}; 
 const URL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-goerli';
 const query = (taskId) => {

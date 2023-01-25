@@ -4,7 +4,7 @@ const { defaultAbiCoder: abiCoder } = ethers.utils;
 
 const whileFork = fork('while-fork.js');
 
-const emitterAddr = '0xd10f9bAD680d551F7709841abe3Dea5d354D9e2c'; 
+const emitterAddr = '0x23916341eC5d94f8719A7c79e0E778D1221daEFa'; 
 const proxyQueue = {
     proxies: [],
     deets: []
@@ -20,7 +20,7 @@ async function main() {
         ]
     };
 
-    console.log('listeningg....');
+    console.log('listening...');
 
     await hre.ethers.provider.on(filter, async (encodedData) => { 
         console.log('1- executing...');
