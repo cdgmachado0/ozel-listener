@@ -35,9 +35,6 @@ async function main() {
             proxyQueue.deets.push({ proxy, owner });
         }
 
-        // if (proxyQueue.indexOf(proxy) === -1) proxyQueue.push({ proxy, owner });
-        // if (proxyQueue.map(pr => pr.proxy).indexOf(proxy) === -1) proxyQueue.push({ proxy, owner });
-
         whileFork.send(proxyQueue);
     });
 
