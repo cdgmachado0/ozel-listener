@@ -32,7 +32,6 @@ const query = (taskId) => {
 
 
 process.on('message', async (msg) => {
-    console.log('5- received in redeem...')
     const storageBeacon = await hre.ethers.getContractAt(sBeaconABI, storageBeaconAddr); 
     
     let { proxy, owner } = msg;
@@ -62,7 +61,6 @@ process.on('message', async (msg) => {
 
 
 async function checkHash(hash) { 
-    console.log('6- checking hash...');
     const receipt = await l1Provider.getTransactionReceipt(hash);
     const l1Receipt = new L1TransactionReceipt(receipt);
     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);

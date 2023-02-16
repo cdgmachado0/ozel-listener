@@ -20,17 +20,15 @@ async function main() {
         ]
     };
 
-    console.log('listening...');
+    console.log('listening....');
 
     await hre.ethers.provider.on(filter, async (encodedData) => { 
-        console.log('1- executing...');
         let codedProxy = encodedData.topics[1];
         let codedOwner = encodedData.topics[2];
         let [ proxy ] = abiCoder.decode(['address'], codedProxy);
         let [ owner ] = abiCoder.decode(['address'], codedOwner);
 
         if (proxyQueue.proxies.indexOf(proxy) === -1) {
-            console.log('2- added...');
             proxyQueue.proxies.push(proxy);
             proxyQueue.deets.push({ proxy, owner });
         }
