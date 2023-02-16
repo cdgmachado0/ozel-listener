@@ -9,8 +9,8 @@ const {
   l2Provider
 } = require('./state-vars.js');
 
-const storageBeaconAddr = '0x923F1A77B9F860E622492042edb840980B868Fe0'; 
-const redeemedHashesAddr = '0xEbd24110595AEaAE06CD419eBBe0D4b7aAa5611b'; 
+const storageBeaconAddr = '0x53A64483Ad7Ca5169F26A8f796B710aCAdEb8f0C'; 
+const redeemedHashesAddr = '0xD617AfE3D42Ca8e5a1514A90Ec14020E85993079'; 
 const tasks = {}; 
 const URL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/poke-me-goerli';
 const query = (taskId) => {
@@ -29,7 +29,10 @@ const query = (taskId) => {
     }
 };
 
-
+const opsL2 = {
+    gasLimit: ethers.BigNumber.from('25000000'),
+    gasPrice: ethers.BigNumber.from('25134698068') 
+};
 
 process.on('message', async (msg) => {
     console.log('5- received in redeem...')
@@ -81,13 +84,13 @@ async function checkHash(hash) {
 async function redeemHash(message, hash, taskId) {
     console.log('redeeming...');
     try {
-        let tx = await message.redeem();
+        let tx = await message.redeem(opsL2);
         await tx.waitForRedeem();
         console.log(`hash: ${hash} redemeed ^^^^^`);
         tasks[taskId].alreadyCheckedHashes.push(hash);
         
         const redeemedHashes = new ethers.Contract(redeemedHashesAddr, redeemABI, l2Provider);
-        tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash); 
+        tx = await redeemedHashes.connect(l2Wallet).storeRedemption(taskId, hash, opsL2); 
         await tx.wait();
     } catch(e) {
         console.log('error: ', e);
