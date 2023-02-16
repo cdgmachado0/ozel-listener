@@ -9,4 +9,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "npx", "hardhat", "run", "event-listener.js", "--network", "mainnet" ]
+CMD [ "npx", "hardhat", "run", "event-listener.js" ]

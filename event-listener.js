@@ -4,7 +4,7 @@ const { defaultAbiCoder: abiCoder } = ethers.utils;
 
 const whileFork = fork('while-fork.js');
 
-const emitterAddr = '0xd986Ac35f3aD549794DBc70F33084F746b58b534'; 
+const emitterAddr = '0x6E61c0981FC588245a35f24eA89790A1dd272Fe5'; 
 const proxyQueue = {
     proxies: [],
     deets: []
