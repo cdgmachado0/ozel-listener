@@ -68,7 +68,7 @@ async function checkHash(hash) {
     const l1Receipt = new L1TransactionReceipt(receipt);
     const messages = await l1Receipt.getL1ToL2Messages(l2Wallet);
     const message = messages[0];
-    const messageRec = await message.waitForStatus();
+    const messageRec = await message.waitForStatus(null, 1200000);
     const status = messageRec.status;
     const wasRedeemed = status === L1ToL2MessageStatus.REDEEMED ? true : false;
     if (wasRedeemed) console.log(`hash redeemed: ${hash}`);
